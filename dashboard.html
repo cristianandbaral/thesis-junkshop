@@ -80,7 +80,7 @@
 
         function getTransactionDetails() {
             // Send a request to the API endpoint on your RPi 4 to get transaction details
-            fetch('http://169.254.200.132:3001/getTransactionDetails')
+            fetch('https://169.254.200.132:3001/getTransactionDetails')
                 .then(response => response.json())
                 .then(data => {
                     console.log('Transaction Details:', data);
