@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPi 4 Dashboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 10px;
+        }
+
+        #transaction-details {
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Raspberry Pi 4 Dashboard</h1>
+    <div id="dashboard-content">
+        <!-- Dashboard content goes here -->
+        <button onclick="getTransactionDetails()">Get Transaction Details</button>
+        <div id="transaction-details"></div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
+
+    <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            // Your Firebase configuration here
+            apiKey: "AIzaSyDboBL68b7dHgm1vZFFy9JlsjqGWKCkfUI",
+     authDomain: "signup-635c1.firebaseapp.com",
+     databaseURL: "https://signup-635c1-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "signup-635c1",
+     storageBucket: "signup-635c1.appspot.com",
+     messagingSenderId: "625939633080",
+     appId: "1:625939633080:web:686bd07267ee5f7eeeb54d",
+      measurementId: "G-43F6GYYB1H"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        // Check if the user is authenticated
+        firebase.auth().onAuthStateChanged((user) => {
+            if (user) {
+                // User is signed in
+                // Display the dashboard content
+                document.getElementById('dashboard-content').style.display = 'block';
+            } else {
+                // User is not signed in
+                // Redirect to the login page
+                window.location.href = 'junkshie.html';
+            }
+        });
+
+        function getTransactionDetails() {
+            // Send a request to the API endpoint on your RPi 4 to get transaction details
+            fetch('http://169.254.200.132:3001/getTransactionDetails')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Transaction Details:', data);
+
+                    // Create an HTML table
+                    const table = document.createElement('table');
+
+                    // Create table header
+                    const headerRow = table.insertRow(0);
+                    const headers = ['Material', 'Time', 'Date'];
+
+                    headers.forEach(headerText => {
+                        const th = document.createElement('th');
+                        th.textContent = headerText;
+                        headerRow.appendChild(th);
+                    });
+
+                    // Create table rows and cells
+                    const row = table.insertRow(1);
+                    const materialCell = row.insertCell(0);
+                    const timeCell = row.insertCell(1);
+                    const dateCell = row.insertCell(2);
+
+                    // Populate cells with data
+                    materialCell.textContent = data.material;
+                    timeCell.textContent = data.time;
+                    dateCell.textContent = data.date;
+
+                    // Append the table to the transaction-details element
+                    const transactionDetailsElement = document.getElementById('transaction-details');
+                    transactionDetailsElement.innerHTML = '';
+                    transactionDetailsElement.appendChild(table);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
+</body>
+</html>
